@@ -5,7 +5,7 @@ import Input from './components/Input';
 
 //Redux
 import { connect } from 'react-redux';
-import { complete, submit } from './redux/reducers/todos';
+import { complete, saveTodo } from './redux/reducers/todos';
 
 const MiApp = ({data, complete, submit})=> {
   const [value, setValue] = useState('');
@@ -35,7 +35,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => ({
   complete: (id) => dispatch(complete(id)),
-  submit: (valor) => dispatch(submit(valor)),
+  submit: (valor) => dispatch(saveTodo(valor)),
 })
 const styles = StyleSheet.create({
     container: {

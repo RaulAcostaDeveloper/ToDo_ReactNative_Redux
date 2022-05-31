@@ -13,18 +13,24 @@ const initialState = [
 ]
 const COMPLETE = 'COMPLETE';
 const SUBMIT = 'SUBMIT';
+const START_SUBMIT = 'START_SUBMIT';
+const ERROR_SUBMIT = 'ERROR_SUBMIT';
 
 export const complete = id => ({
     type: COMPLETE,
     payload: id,
 })
-export const submit = text => ({
+//Action de submit
+export const submit = todo => ({
     type: SUBMIT,
-    payload: {
-        id: Math.random().toString(36),
-        description: text,
-        completed: false,
-    },
+    payload: todo,
+})
+export const startSubmit = () => ({
+    type: START_SUBMIT,
+})
+export const errorSubmit = error => ({
+    type : ERROR_SUBMIT,
+    error,
 })
 export default (state = initialState, action)=> {
     switch(action.type){
@@ -40,5 +46,25 @@ export default (state = initialState, action)=> {
         }
         default:
             return state;
+    }
+}
+
+//Es un thunk, un middleware de redux
+
+export const saveTodo = text => async(dispatch, getState) => {
+    dispatch(startSubmit())
+    try {
+        const todo = {
+            description: text,
+            completed: false,
+        }
+        const response = await fetch('https://jsonplaceholder.typicode.com/todos', {
+            method: 'POST',
+            body: JSON.stringify(todo)
+        })
+        const id = await response.json();
+        dispatch(submit({...todo, ...id}))
+    } catch (error) {
+        dispatch(errorSubmit(error))
     }
 }
